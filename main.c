@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <math.h>
 #include <windows.h>
-#define LIMIT 30
+#define LIMIT 20
 
 // Lucas–Lehmer
 // Determine if Mp = 2p − 1 is prime for p > 2
@@ -27,10 +27,11 @@ int main() {
     double startCalc, endCalc;
     double runTime;
     int prime_count = 0, limit = LIMIT;
-    unsigned long int *out;
-    out = (unsigned long int *) malloc ( ceil(pow(2,limit)) * (sizeof(unsigned long int)));
+    //unsigned long int *out;
+    //out = (unsigned long int *) malloc ( ceil(pow(2,limit)) * (sizeof(unsigned long int)));
+    unsigned long int out[LIMIT];
 
-    printf("Calculating all prime numbers under 2^%lu.\n",limit);
+    printf("Calculating all prime numbers under 2^%d.\n",limit);
 
     startCalc = omp_get_wtime();
 
@@ -42,10 +43,10 @@ int main() {
     #pragma omp parallel
     {
         #pragma omp for schedule (runtime)
-            for (unsigned long int i=1; i<limit; i++) {
+            for (int i=1; i<limit; i++) {
                 m = pow(2,i)-1;
                 if (is_mersenne_prime(m, i)) {
-                    out[(int)i] = m;
+                    out[i] = m;
                     #pragma omp critical
                         prime_count++;
                 }
@@ -57,7 +58,7 @@ int main() {
     endCalc = omp_get_wtime();
     runTime = endCalc - startCalc;
 
-    printf("Calculated all %lu prime numbers under %lu in %g seconds\n\n",prime_count, limit, runTime);
+    printf("Calculated all %d prime numbers under %d in %g seconds\n\n",prime_count, limit, runTime);
 
     /*
     char yesno = 'n';
