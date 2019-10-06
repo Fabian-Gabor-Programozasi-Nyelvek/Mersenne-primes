@@ -5,12 +5,12 @@
 #include <pthread.h>
 #include <math.h>
 #include <windows.h>
-#define LIMIT 12
+#define LIMIT 30
 
 // Lucas–Lehmer
 // Determine if Mp = 2p − 1 is prime for p > 2
-int is_mersenne_prime(int m, int p) {
-    int s = 4;
+int is_mersenne_prime(unsigned long int m, int p) {
+    unsigned long int s = 4;
     for (int i=0; i<p-2; i++) {
         s = ((s * s) - 2) % m;
     }
@@ -23,14 +23,14 @@ void print_prime (unsigned long int i, unsigned long int *out) {
 }
 
 int main() {
-    int m;
+    unsigned long int m;
     double startCalc, endCalc;
     double runTime;
-    unsigned long int prime_count = 0, limit = LIMIT;
+    int prime_count = 0, limit = LIMIT;
     unsigned long int *out;
-    out = (unsigned long int *) malloc ( ceil(limit/2) * (sizeof(unsigned long int)));
+    out = (unsigned long int *) malloc ( ceil(pow(2,limit)) * (sizeof(unsigned long int)));
 
-    printf("Calculating all prime numbers under %lu.\n",limit);
+    printf("Calculating all prime numbers under 2^%lu.\n",limit);
 
     startCalc = omp_get_wtime();
 
@@ -59,12 +59,14 @@ int main() {
 
     printf("Calculated all %lu prime numbers under %lu in %g seconds\n\n",prime_count, limit, runTime);
 
+    /*
     char yesno = 'n';
     printf("Do you want to print the primes up to %lu? (y/n) ", limit);
     scanf("%c", &yesno);
-    if ((yesno == 'y') || (yesno == 'Y')) {
+    */
+    //if ((yesno == 'y') || (yesno == 'Y')) {
         double startPrint = omp_get_wtime();
-        for (unsigned long i=0; i<pow(2,limit); i++){
+        for (unsigned long i=0; i<limit; i++){
             if (out[i]!=0)
                 printf("%lu ",out[i]);
         }
@@ -72,9 +74,9 @@ int main() {
         double endPrint = omp_get_wtime();
         double printTime = endPrint - startPrint;
 
-        printf("\n\nCalculated all %lu prime numbers under %lu in %g seconds\n",prime_count, limit, runTime);
-        printf("Printing all %lu prime numbers under %lu took %g seconds to print\n\n\n",prime_count, limit, printTime);
-    }
+        printf("\n\nCalculated all %lu prime numbers under 2^%lu in %g seconds\n",prime_count, limit, runTime);
+        printf("Printing all %lu prime numbers under 2^%lu took %g seconds to print\n\n\n",prime_count, limit, printTime);
+    //}
 
     printf("\n");
 
